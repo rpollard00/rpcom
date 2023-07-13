@@ -8,7 +8,7 @@ function App() {
 
   return (
     <Router>
-      <div className="grid grid-cols-[20%_60%_20%] grid-rows-auto auto-rows-max justify-items-center bg-slate-800 text-slate-300 font-mono">
+      <div className="grid grid-cols-1 md:grid-cols-[20%_60%_20%] grid-rows-auto auto-rows-max justify-items-center bg-slate-800 text-slate-300 font-mono">
         <nav className="no-underline col-start-2">
           <ul className="flex">
             <li className="px-2">

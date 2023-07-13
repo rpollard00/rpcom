@@ -4,11 +4,11 @@ import portraitImg from "../assets/portrait.png"
 
 export const Home = () => {
   return (
-    <div className="grid grid-cols-[20%_80%]">
-      <div className="p-2 col-start-1">
-        <div className="bg-cyan-400 w-[100%] h-[200px] border-solid rounded mb-2">
+    <div className="grid grid-cols-1 md:grid-cols-[20%_80%]">
+      <div className="p-2 col-start-2 md:col-start-1">
+        <div className="bg-cyan-400 w-[150px] h-[200px] border-solid rounded mb-2">
           <img
-            className="object-cover object-[50%_40%] w-[100%] h-[200px] rounded"
+            className="object-cover object-[50%_40%] w-[100%] h-[100%] rounded"
             src={portraitImg}
             alt="Cool picture"
           />
