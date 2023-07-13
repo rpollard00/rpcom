@@ -47,7 +47,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d
 
 # Copy Go binary from the build stage
-COPY --from=build-stage-backend ./backend /go/bin/main
+COPY --from=build-stage-backend /backend /go/bin/main
 
 # Add Supervisord config
 COPY supervisord.conf /etc/supervisord.conf
