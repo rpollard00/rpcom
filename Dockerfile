@@ -34,10 +34,10 @@ RUN npm run build
 
 # Build Go backend
 FROM golang:latest as build-stage-backend
-WORKDIR /go/src/backend
+WORKDIR /backend
 COPY backend/ .
 RUN go get -d -v ./...
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./api
 
 # Final stage: nginx server for React static files and Go binary
 FROM nginx:alpine as production-stage
