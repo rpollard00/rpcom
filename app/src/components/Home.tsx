@@ -4,8 +4,8 @@ import portraitImg from "../assets/portrait.png"
 
 export const Home = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[20%_80%]">
-      <div className="p-2 col-start-2 md:col-start-1">
+    <div className="flex flex-col md:flex-row items-start">
+      <div className="p-2 md:mb-0 md:mr-6">
         <div className="bg-cyan-400 w-[150px] h-[200px] border-solid rounded mb-2">
           <img
             className="object-cover object-[50%_40%] w-[100%] h-[100%] rounded"
@@ -17,7 +17,7 @@ export const Home = () => {
           Contact
         </a>
       </div>
-      <div className="p-2 col-start-2">
+      <div className="p-2 min-w-[70%]">
         <Title>Reese Pollard</Title>
         <div>Cloud⛅️| Network🌎 | Automation🤖 | Developer🔧 | Unicorn🦄</div>
         <br />
