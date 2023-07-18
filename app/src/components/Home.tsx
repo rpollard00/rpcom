@@ -12,7 +12,7 @@ export const Home = () => {
             src={portraitImg}
             alt="Cool picture"
           />
-        <a className="mt-3 text-cyan-400 block self-center" href="mailto://reese@reesep.com">
+        <a className="mt-3 pt-3 text-cyan-400 block self-center" href="mailto://reese@reesep.com">
           Contact
         </a>
         </div>
