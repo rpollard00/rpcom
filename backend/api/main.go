@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/alexedwards/scs/postgresstore"
+	"github.com/alexedwards/scs/v2"
 	_ "github.com/lib/pq"
 )
 
