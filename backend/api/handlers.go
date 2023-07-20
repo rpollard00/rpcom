@@ -6,6 +6,10 @@ import (
 	"strconv"
 )
 
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("OK\n"))
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Print("HTTP METHOD: ", r.Method)
 

@@ -7,6 +7,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
+
+	"github.com/rpollard00/rpcom/internal/models"
 
 	"github.com/alexedwards/scs/postgresstore"
 	"github.com/alexedwards/scs/v2"
@@ -14,8 +17,10 @@ import (
 )
 
 type application struct {
-	infoLog  *log.Logger
-	errorLog *log.Logger
+	infoLog        *log.Logger
+	errorLog       *log.Logger
+	blogModel      models.BlogModelInterface
+	sessionManager *scs.SessionManager
 }
 
 func main() {
@@ -36,9 +41,16 @@ func main() {
 
 	defer db.Close()
 
+	// initialize session manager
+	sessionManager := scs.New()
+	sessionManager.Store = postgresstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour // 12 hour session
+
 	app := &application{
-		infoLog:  infoLog,
-		errorLog: errorLog,
+		infoLog:        infoLog,
+		errorLog:       errorLog,
+		blogModel:      &models.BlogModel{DB: db},
+		sessionManager: sessionManager,
 	}
 
 	srv := &http.Server{
