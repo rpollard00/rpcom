@@ -18,7 +18,7 @@ type application struct {
 
 func main() {
 	db_pass := os.Getenv("DB_SECRET")
-	default_dsn := fmt.Sprintf("postgres://web:%s@localhost/snippetbox?sslmode=disable", db_pass)
+	default_dsn := fmt.Sprintf("postgres://web:%s@localhost:5432/rpcom_dev?sslmode=disable", db_pass)
 	addr := flag.String("addr", ":8080", "HTTP Network Address:[port]")
 	dsn := flag.String("dsn", default_dsn, "PSQL Connection String")
 
