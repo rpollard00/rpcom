@@ -1,9 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"errors"
+	_ "fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/rpollard00/rpcom/internal/models"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 func ping(w http.ResponseWriter, r *http.Request) {
@@ -20,17 +25,25 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getBlog(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	params := httprouter.ParamsFromContext(r.Context())
 
+	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
 
-	app.infoLog.Print("HTTP METHOD: ", r.Method)
-	app.infoLog.Print("id? =  ", id)
-	fmt.Fprintf(w, "Read a specific blog with id %d...\n", id)
+	blog, err := app.blogs.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
 
+	w.Write(app.renderJson(w, blog))
 }
 
 func (app *application) postBlog(w http.ResponseWriter, r *http.Request) {
