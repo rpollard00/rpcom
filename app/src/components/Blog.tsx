@@ -1,25 +1,33 @@
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import blogService from '../services/blogs'
 
 const Blog = () => {
   const [loading, setLoading] = useState(false)
-  const [blogEntry, setBlogEntry] = useState({ Title: "", Author: "", Content: ""})
+  const [blogEntry, setBlogEntry] = useState<BlogEntry | undefined>({
+    Title: "",
+    Author: "",
+    Content: "",
+    ID: 0,
+    Created: "",
+  })
 
   useEffect(() => {
     setLoading(true)
     blogService.getBlogs().then(r => {
-      setBlogEntry({ ...r.data})
+      setBlogEntry(r)
       setLoading(false)
-    })
+    }).catch((e) => {
+        setLoading(true)
+        console.error(e)
+      })
   }, [setBlogEntry])
   return (
     <>
-      { loading ? <div>Loading...</div> :  
+      { loading || blogEntry === undefined ? <div>Loading...</div> :  
       <div className="flex flex-col items-center">
         <h2 className="text-2xl font-bold p-3">{blogEntry.Title} - {blogEntry.Author}</h2>
-          <ReactMarkdown className="prose dark:prose-invert prose-neutral">
+          <ReactMarkdown className="prose p-5 max-w-none dark:prose-invert prose-neutral">
           {blogEntry.Content}
         </ReactMarkdown>
       </div> }

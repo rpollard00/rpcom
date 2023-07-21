@@ -1,4 +1,4 @@
 interface ListInterface {
-  heading: string
+  heading: JSX.Element 
   items: Array<string>
 }
