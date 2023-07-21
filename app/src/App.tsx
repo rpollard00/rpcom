@@ -21,7 +21,7 @@ function App() {
         </nav>
         <div className="row-start-2 col-start-2 overflow-auto h-screen py-5">
           <Routes>
-            <Route path="/blog" element={<Blog blog="HELLO THIS IS BLOG" />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/" element={<Home />} />
           </Routes>
         </div>

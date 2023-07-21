@@ -19,7 +19,7 @@ export const Home = () => {
       </div>
       <div className="p-2 min-w-[70%]">
         <Title>Reese Pollard</Title>
-        <div>Cloud⛅️| Network🌎 | Automation🤖 | Developer🔧 | Unicorn🦄</div>
+        <div>Cloud⛅️| Network🌎 | Automation🤖 | Developer🔧 </div>
         <br />
         <UnorderedList
           heading="Skills"
