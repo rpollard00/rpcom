@@ -46,6 +46,20 @@ func (app *application) getBlog(w http.ResponseWriter, r *http.Request) {
 	w.Write(app.renderJson(w, blog))
 }
 
+func (app *application) getLatestBlog(w http.ResponseWriter, r *http.Request) {
+	blog, err := app.blogs.GetLatest()
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	w.Write(app.renderJson(w, blog))
+}
+
 func (app *application) postBlog(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Print("HTTP METHOD: ", r.Method)
 

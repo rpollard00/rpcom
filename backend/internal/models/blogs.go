@@ -20,7 +20,7 @@ type Blog struct {
 type BlogModelInterface interface {
 	Insert(title string, author string, content string, tags string) (int, error)
 	Get(id int) (*Blog, error)
-	Latest() (*Blog, error)
+	GetLatest() (*Blog, error)
 	//LastN(num int) ([]*Blog, error)
 }
 
@@ -46,6 +46,23 @@ func (m *BlogModel) Get(id int) (*Blog, error) {
 
 	return b, err
 }
+
+func (m *BlogModel) GetLatest() (*Blog, error) {
+	b := &Blog{}
+	stmt := `SELECT id, title, author, content, tags, created FROM blogs ORDER BY created DESC LIMIT 1`
+	err := m.DB.QueryRow(stmt).Scan(
+		&b.ID, &b.Title, &b.Author, &b.Content, &b.Tags, &b.Created)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+
+	return b, err
+}
+
 func (m *BlogModel) Insert(title string, author string, content string, tags string) (int, error) {
 	stmt := `INSERT INTO blogs (title, author, content, tags, created)
 	VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
