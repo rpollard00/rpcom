@@ -15,8 +15,10 @@ func (app *application) routes() http.Handler {
 
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
 	router.Handler(http.MethodGet, "/api/", dynamic.ThenFunc(app.home))
-	router.Handler(http.MethodGet, "/api/blog", dynamic.ThenFunc(app.getLatestBlog))
-	router.Handler(http.MethodGet, "/api/blog/view/:id", dynamic.ThenFunc(app.getBlog))
+	router.Handler(http.MethodGet, "/api/blog/view/latest", dynamic.ThenFunc(app.getLatestBlogId))
+	router.Handler(http.MethodGet, "/api/blog/view/next", dynamic.ThenFunc(app.getNextBlogId))
+	router.Handler(http.MethodGet, "/api/blog/view/prev", dynamic.ThenFunc(app.getPrevBlogId))
+	router.Handler(http.MethodGet, "/api/blog/view/id/:id", dynamic.ThenFunc(app.getBlog))
 
 	// protected := dynamic.Append(app.requireAuthentication)
 	router.Handler(http.MethodPost, "/api/blog/post", dynamic.ThenFunc(app.postBlog))

@@ -46,8 +46,8 @@ func (app *application) getBlog(w http.ResponseWriter, r *http.Request) {
 	w.Write(app.renderJson(w, blog))
 }
 
-func (app *application) getLatestBlog(w http.ResponseWriter, r *http.Request) {
-	blog, err := app.blogs.GetLatest()
+func (app *application) getLatestBlogId(w http.ResponseWriter, r *http.Request) {
+	id, err := app.blogs.GetLatestId()
 	if err != nil {
 		if errors.Is(err, models.ErrNoRecord) {
 			app.notFound(w)
@@ -57,7 +57,47 @@ func (app *application) getLatestBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write(app.renderJson(w, blog))
+	w.Write(app.renderJson(w, id))
+}
+
+func (app *application) getPrevBlogId(w http.ResponseWriter, r *http.Request) {
+	currentId, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || currentId < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	id, err := app.blogs.GetPrevId(currentId)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	w.Write(app.renderJson(w, id))
+}
+
+func (app *application) getNextBlogId(w http.ResponseWriter, r *http.Request) {
+	currentId, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || currentId < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	id, err := app.blogs.GetNextId(currentId)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	w.Write(app.renderJson(w, id))
 }
 
 func (app *application) postBlog(w http.ResponseWriter, r *http.Request) {

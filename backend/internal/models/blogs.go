@@ -20,7 +20,9 @@ type Blog struct {
 type BlogModelInterface interface {
 	Insert(title string, author string, content string, tags string) (int, error)
 	Get(id int) (*Blog, error)
-	GetLatest() (*Blog, error)
+	GetNextId(currentId int) (int, error)
+	GetPrevId(currentId int) (int, error)
+	GetLatestId() (int, error)
 	//LastN(num int) ([]*Blog, error)
 }
 
@@ -47,20 +49,55 @@ func (m *BlogModel) Get(id int) (*Blog, error) {
 	return b, err
 }
 
-func (m *BlogModel) GetLatest() (*Blog, error) {
+func (m *BlogModel) GetLatestId() (int, error) {
 	b := &Blog{}
-	stmt := `SELECT id, title, author, content, tags, created FROM blogs ORDER BY created DESC LIMIT 1`
+	stmt := `SELECT id, created FROM blogs ORDER BY created DESC LIMIT 1`
 	err := m.DB.QueryRow(stmt).Scan(
-		&b.ID, &b.Title, &b.Author, &b.Content, &b.Tags, &b.Created)
+		&b.ID, &b.Created)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrNoRecord
+			return 0, ErrNoRecord
 		} else {
-			return nil, err
+			return 0, err
 		}
 	}
 
-	return b, err
+	return b.ID, err
+}
+
+func (m *BlogModel) GetNextId(currentId int) (int, error) {
+	b := &Blog{}
+	stmt := `SELECT id FROM blogs WHERE id > $1 ORDER BY id ASC LIMIT 1`
+	err := m.DB.QueryRow(stmt, currentId).Scan(
+		&b.ID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// its not really an error if there's no next row, return the currentId as it means we have the highest entry
+			return currentId, nil
+		} else {
+			return 0, err
+		}
+	}
+
+	return b.ID, err
+}
+
+func (m *BlogModel) GetPrevId(currentId int) (int, error) {
+	b := &Blog{}
+	stmt := `SELECT id FROM blogs WHERE id < $1 ORDER BY id DESC LIMIT 1`
+	err := m.DB.QueryRow(stmt, currentId).Scan(
+		&b.ID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// its not really an error if there's no previous entry
+			// return the currentId as it means we have the highest entry
+			return currentId, nil
+		} else {
+			return 0, err
+		}
+	}
+
+	return b.ID, err
 }
 
 func (m *BlogModel) Insert(title string, author string, content string, tags string) (int, error) {
