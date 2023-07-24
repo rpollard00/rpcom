@@ -103,11 +103,11 @@ func (app *application) getNextBlogId(w http.ResponseWriter, r *http.Request) {
 }
 
 type blogPostForm struct {
-	Title               string `form:"title"`
-	Tags                string `form:"tags"`
-	Content             string `form:"content"`
-	Author              string `form:"author"`
-	validator.Validator `form:"-"`
+	Title               string `json:"title"`
+	Tags                string `json:"tags"`
+	Content             string `json:"content"`
+	Author              string `json:"author"`
+	validator.Validator `json:"-"`
 }
 type blogPostResponse struct {
 	Id int `json:"id"`
