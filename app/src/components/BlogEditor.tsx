@@ -1,15 +1,33 @@
 import { SyntheticEvent, useState } from 'react'
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
+import blogService from '../services/blogs'
 
 const BlogEditor = () => {
   const [content, setContent] = useState<string | undefined>("**Hello world!**")
   const [title, setTitle] = useState<string | undefined>("")
   const [tags, setTags] = useState<string | undefined>("")
 
+  const addBlog = async (blogObj: BlogPostType) => {
+    try {
+      await blogService.postBlog(blogObj)
+    } catch (error) {
+      console.log("Failed to post blog")
+    }
+  }
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault()
+    if (title && tags && content) {
+      const blogPost: BlogPostType = {
+        Title: title, 
+        Tags: tags,
+        Content: content,
+        Author: "Reese" //temp
+      }
+      addBlog(blogPost)
+    }
+     
     console.log(`${title} ${tags} ${content}`) 
   }
   return (

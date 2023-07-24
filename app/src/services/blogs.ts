@@ -42,11 +42,20 @@ async function getPrevBlogId(currentId: number): Promise<number> {
   return 0 
 }
 
+async function postBlog(blogPost: BlogPostType) {
+  // const config = {
+  //   headers: { Authorization: "FAKECODE"}
+  // }
+  const res = await axios.post(`${baseUrl}/post`, blogPost)
+  return res.data
+}
+
 const exports = {
   getBlogs,
   getNextBlogId,
   getPrevBlogId,
-  getLatestBlogId
+  getLatestBlogId,
+  postBlog
 }
 
 export default exports

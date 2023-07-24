@@ -7,10 +7,24 @@ import (
 	"github.com/justinas/alice"
 )
 
+func (app *application) setGlobalOptions(rtr *httprouter.Router) {
+	rtr.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Access-Control-Request-Method") != "" {
+			header := w.Header()
+			header.Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST")
+			header.Set("Access-Control-Allow-Headers", "Content-Type, x-requested-with")
+			header.Set("Access-Control-Allow-Origin", "*")
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
 func (app *application) routes() http.Handler {
 	router := httprouter.New()
 
 	router.HandlerFunc(http.MethodGet, "/api/ping", ping)
+	// this is for automatic option/CORS handling
+	app.setGlobalOptions(router)
 	// dynamic := alice.New(app.sessionManager.LoadAndSave, app.authenticate, app.addHeaders)
 	dynamic := alice.New(app.addHeaders)
 

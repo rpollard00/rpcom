@@ -14,16 +14,6 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 	})
 }
 
-func (app *application) addHeaders(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//w.Header().Set("Content-Type", "application/json")
-		// fix cors header for dev v prod
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-
-		next.ServeHTTP(w, r)
-	})
-}
-
 func (app *application) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app.infoLog.Printf("%s - %s %s %s", r.RemoteAddr, r.Proto, r.Method, r.URL.RequestURI())
@@ -40,6 +30,19 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 				app.serverError(w, fmt.Errorf("%s", err))
 			}
 		}()
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) handleAutomaticCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Access-Control-Request-Method") != "" {
+			header := w.Header()
+			header.Set("Access-Control-Allow-Methods", header.Get("Allow"))
+			header.Set("Access-Control-Allow-Origin", "*")
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 		next.ServeHTTP(w, r)
 	})
 }
