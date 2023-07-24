@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	_ "fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/rpollard00/rpcom/internal/models"
+	"github.com/rpollard00/rpcom/internal/validator"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -100,13 +102,51 @@ func (app *application) getNextBlogId(w http.ResponseWriter, r *http.Request) {
 	w.Write(app.renderJson(w, id))
 }
 
-func (app *application) postBlog(w http.ResponseWriter, r *http.Request) {
-	app.infoLog.Print("HTTP METHOD: ", r.Method)
+type blogPostForm struct {
+	Title               string `form:"title"`
+	Tags                string `form:"tags"`
+	Content             string `form:"content"`
+	Author              string `form:"author"`
+	validator.Validator `form:"-"`
+}
+type blogPostResponse struct {
+	Id int `json:"id"`
+}
 
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		app.clientError(w, http.StatusMethodNotAllowed)
+func (app *application) blogPost(w http.ResponseWriter, r *http.Request) {
+	var form blogPostForm
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
 	}
 
-	w.Write([]byte("Create a new blog...\n"))
+	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+	form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be more than 100 characters long")
+	form.CheckField(validator.NotBlank(form.Content), "content", "This field cannot be blank")
+	form.CheckField(validator.NotBlank(form.Tags), "tags", "This field cannot be blank")
+	form.CheckField(validator.NotBlank(form.Author), "author", "This field cannot be blank")
+
+	if !form.Valid() {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	id, err := app.blogs.Insert(form.Title, form.Author, form.Content, form.Tags)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	data := blogPostResponse{
+		Id: id,
+	}
+	// app.sessionManager.Put(r.Context(), "flash", "Snippet successfully created!")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(data)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 }

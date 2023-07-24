@@ -16,7 +16,7 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 
 func (app *application) addHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		//w.Header().Set("Content-Type", "application/json")
 		// fix cors header for dev v prod
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 

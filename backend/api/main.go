@@ -13,6 +13,7 @@ import (
 
 	"github.com/alexedwards/scs/postgresstore"
 	"github.com/alexedwards/scs/v2"
+	"github.com/go-playground/form/v4"
 	_ "github.com/lib/pq"
 )
 
@@ -21,6 +22,7 @@ type application struct {
 	errorLog       *log.Logger
 	blogs          models.BlogModelInterface
 	sessionManager *scs.SessionManager
+	formDecoder    *form.Decoder
 }
 
 func main() {
@@ -41,6 +43,7 @@ func main() {
 
 	defer db.Close()
 
+	formDecoder := form.NewDecoder()
 	// initialize session manager
 	sessionManager := scs.New()
 	sessionManager.Store = postgresstore.New(db)
@@ -51,6 +54,7 @@ func main() {
 		errorLog:       errorLog,
 		blogs:          &models.BlogModel{DB: db},
 		sessionManager: sessionManager,
+		formDecoder:    formDecoder,
 	}
 
 	srv := &http.Server{

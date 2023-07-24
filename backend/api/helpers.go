@@ -18,6 +18,7 @@ func (app *application) renderJson(w http.ResponseWriter, v any) []byte {
 		app.serverError(w, err)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	return jsonBlog
 }
 

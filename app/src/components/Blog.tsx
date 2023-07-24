@@ -33,13 +33,14 @@ const Blog = () => {
   return (
     <>
       { loading || blogEntry === undefined ? <div>Loading...</div> :  
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center pb-10">
       <BlogNav setCurrentBlogId={setCurrentBlogId} currentBlogId={currentBlogId}/>
         <h2 className="text-2xl font-bold p-3 text-center">{blogEntry.Title}</h2>
         <h2 className="italic self-end pr-10">by {blogEntry.Author} on {blogEntry.Created}</h2>
           <ReactMarkdown className="prose p-5 max-w-none dark:prose-invert prose-neutral">
           {blogEntry.Content}
         </ReactMarkdown>
+      <BlogNav setCurrentBlogId={setCurrentBlogId} currentBlogId={currentBlogId}/>
       </div> }
     </>
   )
@@ -73,7 +74,8 @@ const BlogNav = ({ currentBlogId, setCurrentBlogId }: BlogNavProps ) => {
   return (
   <div>
       <button className="disabled:opacity-10" disabled={prevBlogId === currentBlogId} onClick={() => { updateBlogId(prevBlogId) }}>Previous</button>
-{" "}|{" "}<button className="disabled:opacity-10" disabled={nextBlogId === currentBlogId} onClick={() => { updateBlogId(nextBlogId) }}>Next</button>
+      {" "}|{" "}
+      <button className="disabled:opacity-10" disabled={nextBlogId === currentBlogId} onClick={() => { updateBlogId(nextBlogId) }}>Next</button>
   </div>
   )
 }
