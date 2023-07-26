@@ -2,15 +2,18 @@ import { SyntheticEvent, useState } from 'react'
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
 import blogService from '../services/blogs'
+import useToastContext from '../hooks/useToastContext'
 
 const BlogEditor = () => {
   const [content, setContent] = useState<string | undefined>("**Hello world!**")
   const [title, setTitle] = useState<string | undefined>("")
   const [tags, setTags] = useState<string | undefined>("")
+  const addToast = useToastContext()
 
   const addBlog = async (blogObj: BlogPostType) => {
     try {
       await blogService.postBlog(blogObj)
+      addToast(`Posted blog: ${blogObj.Title}`)
     } catch (error) {
       console.log("Failed to post blog")
     }

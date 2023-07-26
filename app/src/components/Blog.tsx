@@ -1,6 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import blogService from '../services/blogs'
+import useToastContext from '../hooks/useToastContext'
+//import { useCoolStore } from '../services/store'
+//import Notification from '../components/Notification'
 
 const Blog = () => {
   const [loading, setLoading] = useState(false)
@@ -8,11 +11,13 @@ const Blog = () => {
     Title: "",
     Author: "",
     Content: "",
+    Tags: "",
     ID: 0,
     Created: "",
   })
+  const addToast = useToastContext()
   const [currentBlogId, setCurrentBlogId] = useState<number>(0)
-
+  
   useEffect(() => {
     setLoading(true)
     if (currentBlogId === 0) {
@@ -24,14 +29,18 @@ const Blog = () => {
 
     blogService.getBlogs(currentBlogId).then(r => {
       setBlogEntry(r)
+      if (r !== undefined) {
+        addToast(r.Title)
+      }
       setLoading(false)
     }).catch((e) => {
         setLoading(true)
         console.error(e)
       })
-  }, [currentBlogId, setBlogEntry])
+  }, [currentBlogId, setBlogEntry, addToast])
   return (
     <>
+
       { loading || blogEntry === undefined ? <div>Loading...</div> :  
       <div className="flex flex-col items-center pb-10">
       <BlogNav setCurrentBlogId={setCurrentBlogId} currentBlogId={currentBlogId}/>

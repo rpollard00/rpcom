@@ -13,3 +13,11 @@ type BlogPostType = {
   Content: string,
   Tags: string,
 }
+
+type UserSignupType = {
+  Username: string,
+  Email: string,
+  Password: string,
+}
+
+

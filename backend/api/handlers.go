@@ -184,8 +184,17 @@ func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
 			app.serverError(w, err)
 		}
 
-		app.jsonResponse(w, messages, http.StatusTeapot)
+		app.jsonResponse(w, messages, http.StatusUnprocessableEntity)
 		return
+	}
+
+	err = app.users.Insert(form.Username, form.Email, form.Password)
+	if err != nil {
+		if errors.Is(err, models.ErrDuplicateEmail) {
+			app.jsonError(w, err, http.StatusUnprocessableEntity)
+		} else {
+			app.serverError(w, err)
+		}
 	}
 
 	responseData := struct {
@@ -196,8 +205,6 @@ func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
 		Username: form.Username,
 	}
 	app.jsonResponse(w, responseData, http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
 }
 
 // login
