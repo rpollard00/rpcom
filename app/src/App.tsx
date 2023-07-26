@@ -3,6 +3,7 @@ import Blog from "./components/Blog"
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 import { Home } from "./components/Home"
 import BlogEditor from "./components/BlogEditor"
+import LoginPage from "./components/Login"
 
 function App() {
   //const [count, setCount] = useState(0)
@@ -21,6 +22,9 @@ function App() {
             <li className="px-2">
               <Link to="/post">Post</Link>
             </li>
+            <li className="px-2">
+              <Link to="/login">Login</Link>
+            </li>
           </ul>
         </nav>
         <div className="row-start-2 col-start-2 overflow-auto h-screen py-5 min-w-[100%]">
@@ -28,6 +32,7 @@ function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/" element={<Home />} />
             <Route path="/post" element={<BlogEditor />} />
+            <Route path="/login" element={<LoginPage/>} />
           </Routes>
         </div>
       </div>

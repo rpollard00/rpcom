@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	_ "fmt"
 	"net/http"
 	"strconv"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 )
+
+const PasswordMinChars = 12
 
 func ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK\n"))
@@ -146,7 +149,57 @@ func (app *application) blogPost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(data)
 	if err != nil {
-		app.serverError(w, err)
+		app.jsonError(w, err, http.StatusUnprocessableEntity)
 		return
 	}
 }
+
+// signup
+type signUpForm struct {
+	Email               string `json:"email"`
+	Username            string `json:"username"`
+	Password            string `json:"password"`
+	validator.Validator `json:"-"`
+}
+
+func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
+	var form signUpForm
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+	}
+
+	form.CheckField(validator.NotBlank(form.Email), "email", "Cannot be blank")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "Must be a valid email address")
+	form.CheckField(validator.NotBlank(form.Username), "username", "Cannot be blank")
+	form.CheckField(validator.NotBlank(form.Password), "password", "Cannot be blank")
+
+	passwordReqMsg := fmt.Sprintf("Password must contain at least %v chars", PasswordMinChars)
+	form.CheckField(validator.MinChars(form.Password, PasswordMinChars), "password", passwordReqMsg)
+
+	if !form.Valid() {
+		messages, err := form.GetValidatorMessages()
+		if err != nil {
+			app.serverError(w, err)
+		}
+
+		app.jsonResponse(w, messages, http.StatusTeapot)
+		return
+	}
+
+	responseData := struct {
+		Message  string
+		Username string
+	}{
+		Message:  "User account created",
+		Username: form.Username,
+	}
+	app.jsonResponse(w, responseData, http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+}
+
+// login
+
+// logout

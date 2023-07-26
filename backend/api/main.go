@@ -20,6 +20,7 @@ import (
 type application struct {
 	infoLog        *log.Logger
 	errorLog       *log.Logger
+	users          models.UserModelInterface
 	blogs          models.BlogModelInterface
 	sessionManager *scs.SessionManager
 	formDecoder    *form.Decoder
@@ -52,6 +53,7 @@ func main() {
 	app := &application{
 		infoLog:        infoLog,
 		errorLog:       errorLog,
+		users:          &models.UserModel{DB: db},
 		blogs:          &models.BlogModel{DB: db},
 		sessionManager: sessionManager,
 		formDecoder:    formDecoder,
