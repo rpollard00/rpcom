@@ -1,6 +1,7 @@
 import { SyntheticEvent, useState } from 'react'
 import userService from '../services/users'
 import useToastContext from '../hooks/useToastContext'
+import { AxiosError } from 'axios'
 
 const SignupPage = () => {
   const [username, setUsername] = useState<string | undefined>("") 
@@ -9,11 +10,22 @@ const SignupPage = () => {
   const addToast = useToastContext()
 
   const postSignup = async (signupObj: UserSignupType) => {
+    let r: any 
     try {
-      await userService.postSignup(signupObj)
+      r = await userService.postSignup(signupObj)
+      addToast(`Successfully registered user: ${username}`)
+      console.log(r)
     } catch (error) {
-      console.log("Failed to complete signup")
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          if (error.response.data.data) {
+          addToast(`Unable to add user: ${error.response.data.data.error}`)
+          }
+        }
+      }
     }
+
+    return r
   }
 
   const handleSubmit = (event: SyntheticEvent) => {
@@ -26,7 +38,6 @@ const SignupPage = () => {
       }
       try {
         postSignup(signupPost)
-        addToast(`Successfully registered user: ${username}`)
       } catch (error) {
         console.error("Unable to post signup...") 
       }

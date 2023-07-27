@@ -29,6 +29,8 @@ const BlogEditor = () => {
         Author: "Reese" //temp
       }
       addBlog(blogPost)
+    } else {
+      addToast(`Failed to post blog: missing fields`)
     }
      
     console.log(`${title} ${tags} ${content}`) 

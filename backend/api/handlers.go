@@ -191,15 +191,16 @@ func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
 	err = app.users.Insert(form.Username, form.Email, form.Password)
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateEmail) {
-			app.jsonError(w, err, http.StatusUnprocessableEntity)
+			app.jsonError(w, err, http.StatusConflict)
 		} else {
 			app.serverError(w, err)
 		}
+		return
 	}
 
 	responseData := struct {
-		Message  string
-		Username string
+		Message  string `json:"message"`
+		Username string `json:"username"`
 	}{
 		Message:  "User account created",
 		Username: form.Username,
