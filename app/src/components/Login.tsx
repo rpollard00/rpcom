@@ -1,12 +1,46 @@
+import { AxiosError, AxiosResponse } from 'axios'
 import { SyntheticEvent, useState } from 'react'
+import userService from '../services/users'
+import useToastContext from '../hooks/useToastContext'
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string | undefined>("")
   const [password, setPassword] = useState<string | undefined>("")
+  const addToast = useToastContext()
+
+  const postLogin = async (loginObj: LoginPost) => {
+    let r: AxiosResponse 
+    try {
+      r = await userService.postLogin(loginObj)
+      addToast(`Successfully logged in.`) 
+      console.log(r)
+      return r
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          if (error.response.data.data) {
+            addToast(`Unable to login: ${error.response.data.data.error}`)
+          }
+          return error.response
+        }
+      }
+    }
+  }
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault()
-     
+    if (email && password) {
+      const loginPost: LoginPost = {
+        Email: email,
+        Password: password
+      }
+      try {
+        postLogin(loginPost)
+      } catch (error) {
+        console.error("Unable to post signup...") 
+      }
+    }
     console.log("Submit login")
   }
   return (

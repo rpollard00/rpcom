@@ -26,6 +26,8 @@ type application struct {
 	formDecoder    *form.Decoder
 }
 
+var jwtKey = []byte(os.Getenv("JWT_SECRET"))
+
 func main() {
 	db_pass := os.Getenv("DB_SECRET")
 	default_dsn := fmt.Sprintf("postgres://web:%s@localhost:5432/rpcom_dev?sslmode=disable", db_pass)

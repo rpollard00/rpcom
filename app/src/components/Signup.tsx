@@ -1,7 +1,7 @@
 import { SyntheticEvent, useState } from 'react'
 import userService from '../services/users'
 import useToastContext from '../hooks/useToastContext'
-import { AxiosError } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 
 const SignupPage = () => {
   const [username, setUsername] = useState<string | undefined>("") 
@@ -10,22 +10,23 @@ const SignupPage = () => {
   const addToast = useToastContext()
 
   const postSignup = async (signupObj: UserSignupType) => {
-    let r: any 
+    let r: AxiosResponse 
     try {
       r = await userService.postSignup(signupObj)
       addToast(`Successfully registered user: ${username}`)
       console.log(r)
+      return r
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response) {
           if (error.response.data.data) {
           addToast(`Unable to add user: ${error.response.data.data.error}`)
           }
+          return error.response
         }
       }
     }
 
-    return r
   }
 
   const handleSubmit = (event: SyntheticEvent) => {
@@ -62,7 +63,7 @@ const SignupPage = () => {
           </div>
           <div className="w-[350px] flex-grow-0 flex-shrink-0">
             <label className="p-0.5 inline-block">Password: 
-              <input type="password" name="Tags" onChange={e => setPassword(e.target.value)} value={password}/>
+              <input type="password" name="password" onChange={e => setPassword(e.target.value)} value={password}/>
             </label>
           </div>
           <button className="align-right" type="submit">Signup</button>

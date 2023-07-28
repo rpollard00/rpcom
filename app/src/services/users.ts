@@ -11,8 +11,14 @@ async function postSignup(signupPost: UserSignupType) {
   return res.data
 }
 
+async function postLogin(loginPost: LoginPost) {
+  const res = await axios.post(`${baseUrl}/login`, loginPost)
+  return res.data
+}
+
 const exports = {
-  postSignup
+  postSignup,
+  postLogin
 }
 
 export default exports

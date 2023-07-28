@@ -67,7 +67,6 @@ func (app *application) jsonResponse(w http.ResponseWriter, Body any, code int) 
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 
 	// err := json.NewEncoder(w).Encode(body)
-	app.infoLog.Printf("DATA: %s", Body)
 	JsonPayload := &JsonResponseData{
 		Data: Body,
 		Code: code,
@@ -77,7 +76,6 @@ func (app *application) jsonResponse(w http.ResponseWriter, Body any, code int) 
 		app.jsonError(w, err, http.StatusUnprocessableEntity)
 		return
 	}
-	app.infoLog.Printf("JSON DATA: %s", Data)
 	w.WriteHeader(code)
 	w.Write(Data)
 }

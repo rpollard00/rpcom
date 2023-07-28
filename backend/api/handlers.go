@@ -7,10 +7,12 @@ import (
 	_ "fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/rpollard00/rpcom/internal/models"
 	"github.com/rpollard00/rpcom/internal/validator"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -209,5 +211,91 @@ func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
 }
 
 // login
+type UserLoginForm struct {
+	Email               string `json:"email"`
+	Password            string `json:"password"`
+	validator.Validator `json:"-"`
+}
+
+type TokenResponse struct {
+	Token string `json:"token"`
+	Email string `json:"email"`
+	ID    int    `json:"id"`
+}
+
+type Claims struct {
+	Email string `json:"email"`
+	jwt.RegisteredClaims
+}
+
+func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
+	var form UserLoginForm
+
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+	}
+
+	// validation checks
+	// check that the email and password are not blank
+	// check that the email is nicely formatted
+	form.CheckField(validator.NotBlank(form.Email), "email", "Field cannot be blank")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "Must be a valid email address")
+	form.CheckField(validator.NotBlank(form.Password), "password", "Field cannot be blank")
+
+	if !form.Valid() {
+		messages, err := form.GetValidatorMessages()
+		if err != nil {
+			app.serverError(w, err)
+		}
+
+		app.jsonResponse(w, messages, http.StatusUnprocessableEntity)
+		return
+	}
+
+	id, err := app.users.Authenticate(form.Email, form.Password)
+	if err != nil {
+		if errors.Is(err, models.ErrInvalidCredentials) {
+			form.AddNonFieldError("Invalid username or password")
+
+			messages, err := form.GetValidatorMessages()
+			if err != nil {
+				app.serverError(w, err)
+			}
+
+			app.jsonResponse(w, messages, http.StatusUnprocessableEntity)
+			return
+		} else {
+			app.serverError(w, err)
+		}
+	}
+
+	// 10 minutes from now if that isn't obvious
+	expirationTime := time.Now().Add(10 * time.Minute)
+
+	claims := &Claims{
+		Email: form.Email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	tokenResponse := &TokenResponse{
+		Token: tokenString,
+		Email: form.Email,
+		ID:    id,
+	}
+	app.jsonResponse(w, tokenResponse, http.StatusOK)
+
+	return
+}
 
 // logout

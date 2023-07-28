@@ -20,4 +20,8 @@ type UserSignupType = {
   Password: string,
 }
 
+type LoginPost = {
+  Email: string,
+  Password: string,
+}
 
