@@ -46,6 +46,18 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 
 func (app *application) requireAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ok, err := app.isAuthenticated(r)
+		if !ok {
+			if err != nil {
+				app.jsonError(w, err, http.StatusBadRequest)
+				return
+			}
+
+			app.jsonResponse(w, "Unauthorized to access resoures", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
 	})
 }
 

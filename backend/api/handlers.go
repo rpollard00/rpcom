@@ -6,6 +6,7 @@ import (
 	"fmt"
 	_ "fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -165,11 +166,22 @@ type signUpForm struct {
 }
 
 func (app *application) signUp(w http.ResponseWriter, r *http.Request) {
+	signup_allowed, err := strconv.ParseBool(os.Getenv("ALLOW_SIGNUP"))
+	if err != nil {
+		signup_allowed = false
+	}
+
+	if !signup_allowed {
+		app.jsonResponse(w, "Signup is disabled", http.StatusServiceUnavailable)
+		return
+	}
+
 	var form signUpForm
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&form)
+	err = decoder.Decode(&form)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
+		return
 	}
 
 	form.CheckField(validator.NotBlank(form.Email), "email", "Cannot be blank")
@@ -264,7 +276,7 @@ func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 				app.serverError(w, err)
 			}
 
-			app.jsonResponse(w, messages, http.StatusUnprocessableEntity)
+			app.jsonResponse(w, messages, http.StatusUnauthorized)
 			return
 		} else {
 			app.serverError(w, err)

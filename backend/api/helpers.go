@@ -2,14 +2,41 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func (app *application) isAuthenticated(r *http.Request) bool {
-	//isAuthenticated, ok := r.Context().Value().isAuthenticatedContextKey.(bool)
-	return false
+func (app *application) isAuthenticated(r *http.Request) (bool, error) {
+	authHeader := r.Header.Get("Authorization")
+	bearerToken := strings.Fields(authHeader)
+	if len(bearerToken) != 2 || strings.ToLower(bearerToken[0]) != "bearer" {
+		err := errors.New("invalid authorization header")
+		return false, err
+	}
+	token := bearerToken[1]
+
+	claims := &Claims{}
+
+	tok, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if err != nil {
+		if errors.Is(err, jwt.ErrSignatureInvalid) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	if !tok.Valid {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func (app *application) renderJson(w http.ResponseWriter, v any) []byte {

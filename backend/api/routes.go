@@ -34,12 +34,12 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/api/blog/view/next", dynamic.ThenFunc(app.getNextBlogId))
 	router.Handler(http.MethodGet, "/api/blog/view/prev", dynamic.ThenFunc(app.getPrevBlogId))
 	router.Handler(http.MethodGet, "/api/blog/view/id/:id", dynamic.ThenFunc(app.getBlog))
-
-	//protected := dynamic.Append(app.requireAuthentication)
-	router.Handler(http.MethodPost, "/api/blog/post", dynamic.ThenFunc(app.blogPost))
-	router.Handler(http.MethodPost, "/api/users/signup", dynamic.ThenFunc(app.signUp))
 	router.Handler(http.MethodPost, "/api/users/login", dynamic.ThenFunc(app.userLoginPost))
-	router.Handler(http.MethodPost, "/api/users/logout", dynamic.ThenFunc(app.blogPost))
+	router.Handler(http.MethodPost, "/api/users/signup", dynamic.ThenFunc(app.signUp))
+
+	protected := dynamic.Append(app.requireAuthentication)
+	router.Handler(http.MethodPost, "/api/blog/post", protected.ThenFunc(app.blogPost))
+	router.Handler(http.MethodPost, "/api/users/logout", protected.ThenFunc(app.blogPost))
 	standard := alice.New(app.recoverPanic, app.logRequest)
 	return standard.Then(router)
 }
