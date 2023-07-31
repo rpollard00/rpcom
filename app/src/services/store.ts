@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 
 interface coolStoreState {
-  notifyMsg: string
-  setNotifyMsg: (msg: string) => void
-  clearNotifyMsg: () => void
+  loggedInUser: UserData | undefined
+  setLoggedInUser: (loggedInUser:UserData) => void
+  clearLoggedInUser: () => void
 }
 
 export const useCoolStore = create<coolStoreState>((set) => ({
-    notifyMsg: "",
-    setNotifyMsg: (msg) => set({ notifyMsg: msg }),
-    clearNotifyMsg: () => set({ notifyMsg: "" })
+    loggedInUser: undefined,
+    setLoggedInUser: (user: UserData) => set({ loggedInUser: user }),
+    clearLoggedInUser: () => set({ loggedInUser: undefined })
 }))

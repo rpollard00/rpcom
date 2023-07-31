@@ -1,14 +1,19 @@
 import { AxiosError, AxiosResponse } from 'axios'
 import { SyntheticEvent, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import userService from '../services/users'
 import blogService from '../services/blogs'
 import useToastContext from '../hooks/useToastContext'
+import { useCoolStore } from '../services/store'
 
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string | undefined>("")
   const [password, setPassword] = useState<string | undefined>("")
-  const [user, setUser] = useState<UserData | undefined>(undefined)
+  const user: UserData | undefined = useCoolStore((state) => state.loggedInUser)
+  const setUser = useCoolStore((state) => state.setLoggedInUser)
+  const navigate = useNavigate()
+
   const addToast = useToastContext()
 
   const postLogin = async (loginObj: LoginPost) => {
@@ -17,11 +22,13 @@ const LoginPage = () => {
       r = await userService.postLogin(loginObj)
       setEmail('')
       setPassword('')
+
       const userData = r.data
       setUser(userData)
+      window.localStorage.setItem('rpcomAuthUser', JSON.stringify(userData))
       blogService.setToken(userData.token)
       addToast(`Welcome ${userData.email}. You have successfully logged in.`)
-      return r
+      navigate('/')
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         console.log(error.response.data)
@@ -45,7 +52,6 @@ const LoginPage = () => {
         console.error("Unable to post signup...")
       }
     }
-    console.log("Submit login")
   }
   return (
     <div className="flex flex-col flex-wrap items-center max-w-full min-w-fit pb-10 border-solid border-2 border-white">

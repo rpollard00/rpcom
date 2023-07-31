@@ -2,19 +2,16 @@ import Title from "./Title"
 import { UnorderedList } from "./List"
 import portraitImg from "../assets/portrait.png"
 //import Notification from './Notification'
-import { useCoolStore } from "../services/store"
 import { useEffect } from "react"
 
 export const Home = () => {
   useEffect(() => {
     console.log("Blah")
   }, [])
-  const msgstr = useCoolStore((state) => state.notifyMsg)
   
   return (
     <div className="flex flex-col md:flex-row items-start">
       <div className="p-2 md:mb-0 md:mr-6">
-        {msgstr}
         <div className="flex flex-col bg-cyan-400 w-[150px] h-[200px] border-solid rounded-full mb-2">
           <img
             className="flex-none object-cover object-[50%_40%] w-[100%] h-[100%] rounded-full"
