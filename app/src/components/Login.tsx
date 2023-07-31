@@ -54,21 +54,24 @@ const LoginPage = () => {
     }
   }
   return (
-    <div className="flex flex-col flex-wrap items-center max-w-full min-w-fit pb-10 border-solid border-2 border-white">
-      {user ? <div>Hello, {user.email}</div> : <div>Please enter credentials below</div>}
+    <div className="flex flex-col flex-wrap max-w-full min-w-fit pb-10 bg-slate-700 rounded-md">
+      { user 
+        ? <div className="self-center pt-4 pb-2 text-cyan-50 font-semibold">Hello, {user.email}</div> 
+        : <div className="self-center pt-4 pb-2 text-cyan-50 font-semibold">Please enter credentials below</div>
+      }
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-col justify-center border-solid border-2 border-red-500">
-          <div className="w-[350px] h-[80px] content-center flex-grow-0 flex-shrink-0 border-solid border-2 border-green-500">
-            <label className="p-0.5">Email:
-              <input className="w-[150px]" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email" />
-            </label>
+        <div className="self-stretch flex-1">
+          <div className="flex justify-end p-3">
+            <label className="pl-1 pr-2 py-1.5">Email:</label>
+            <input className="flex-1 bg-zinc-900 px-2 text-end" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email" />
           </div>
-          <div className="w-[350px] flex-grow-0 flex-shrink-0">
-            <label className="p-0.5 inline-block">Password:
-              <input type="password" name="Tags" onChange={e => setPassword(e.target.value)} value={password} />
-            </label>
+          <div className="flex justify-end p-3">
+            <label className="pl-1 pr-2 py-1.5">Password:</label>
+            <input className="flex-1 bg-zinc-900 px-2 text-end" type="password" name="Tags" onChange={e => setPassword(e.target.value)} value={password} />
           </div>
-          <button className="align-right" type="submit">Login</button>
+          <div className="flex justify-end p-3">
+            <button className="" type="submit">Login</button>
+          </div>
         </div>
       </form>
     </div>

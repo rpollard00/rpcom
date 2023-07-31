@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import blogService from '../services/blogs'
-import useToastContext from '../hooks/useToastContext'
+// import useToastContext from '../hooks/useToastContext'
 //import { useCoolStore } from '../services/store'
 //import Notification from '../components/Notification'
 
@@ -15,7 +15,7 @@ const Blog = () => {
     ID: 0,
     Created: "",
   })
-  const addToast = useToastContext()
+  // const addToast = useToastContext()
   const [currentBlogId, setCurrentBlogId] = useState<number>(0)
   
   useEffect(() => {
@@ -29,15 +29,12 @@ const Blog = () => {
 
     blogService.getBlogs(currentBlogId).then(r => {
       setBlogEntry(r)
-      if (r !== undefined) {
-        addToast(r.Title)
-      }
       setLoading(false)
     }).catch((e) => {
         setLoading(true)
         console.error(e)
       })
-  }, [currentBlogId, setBlogEntry, addToast])
+  }, [currentBlogId, setBlogEntry])
   return (
     <>
 
