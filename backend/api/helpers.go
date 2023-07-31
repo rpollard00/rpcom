@@ -15,6 +15,7 @@ func (app *application) isAuthenticated(r *http.Request) (bool, error) {
 	authHeader := r.Header.Get("Authorization")
 	bearerToken := strings.Fields(authHeader)
 	if len(bearerToken) != 2 || strings.ToLower(bearerToken[0]) != "bearer" {
+		app.infoLog.Printf("BEARER TOKEN: %s", bearerToken)
 		err := errors.New("invalid authorization header")
 		return false, err
 	}

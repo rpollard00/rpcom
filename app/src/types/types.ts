@@ -19,6 +19,11 @@ type UserSignupType = {
   Email: string,
   Password: string,
 }
+ 
+type UserData = {
+  email: string,
+  token: string,
+}
 
 type LoginPost = {
   Email: string,

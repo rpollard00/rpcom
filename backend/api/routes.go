@@ -12,7 +12,7 @@ func (app *application) setGlobalOptions(rtr *httprouter.Router) {
 		if r.Header.Get("Access-Control-Request-Method") != "" {
 			header := w.Header()
 			header.Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST")
-			header.Set("Access-Control-Allow-Headers", "Content-Type, x-requested-with")
+			header.Set("Access-Control-Allow-Headers", "Content-Type, x-requested-with, authorization")
 			header.Set("Access-Control-Allow-Origin", "*")
 		}
 

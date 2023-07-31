@@ -2,6 +2,15 @@ import axios from 'axios'
 const serverUrl = 'http://localhost:8080'
 const baseUrl = `${serverUrl}/api/blog`
 
+
+let token: string | null = null
+
+function setToken(newToken: string) {
+  console.log("TOKEN SET")
+  token = `Bearer ${newToken}`
+  return
+}
+
 async function getBlogs(id: number): Promise<BlogEntry | undefined> {
   try {
     const req = await axios.get(`${baseUrl}/view/id/${id}`)
@@ -43,10 +52,10 @@ async function getPrevBlogId(currentId: number): Promise<number> {
 }
 
 async function postBlog(blogPost: BlogPostType) {
-  // const config = {
-  //   headers: { Authorization: "FAKECODE"}
-  // }
-  const res = await axios.post(`${baseUrl}/post`, blogPost)
+  const config = {
+    headers: { Authorization: token }
+  }
+  const res = await axios.post(`${baseUrl}/post`, blogPost, config)
   return res.data
 }
 
@@ -55,7 +64,8 @@ const exports = {
   getNextBlogId,
   getPrevBlogId,
   getLatestBlogId,
-  postBlog
+  postBlog,
+  setToken
 }
 
 export default exports
