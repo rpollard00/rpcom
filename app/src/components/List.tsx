@@ -1,5 +1,10 @@
 import { Heading } from "./Heading"
 
+interface ListInterface {
+  heading: string 
+  items: Array<string>
+}
+
 export const UnorderedList = (list: ListInterface) => {
   return (
     <>

@@ -1,25 +1,31 @@
 import Title from "./Title"
 import { UnorderedList } from "./List"
 import portraitImg from "../assets/portrait.png"
+//import Notification from './Notification'
+import { useEffect } from "react"
 
 export const Home = () => {
+  useEffect(() => {
+    console.log("Blah")
+  }, [])
+
   return (
     <div className="flex flex-col md:flex-row items-start">
       <div className="p-2 md:mb-0 md:mr-6">
-        <div className="bg-cyan-400 w-[150px] h-[200px] border-solid rounded mb-2">
+        <div className="flex flex-col w-[150px] border-solid mb-2">
           <img
-            className="object-cover object-[50%_40%] w-[100%] h-[100%] rounded"
+            className="flex-none object-cover object-[50%_40%] w-[100%] h-[100%] rounded-full"
             src={portraitImg}
             alt="Cool picture"
           />
+          <a className="mt-3 pt-3 text-cyan-400 block self-center" href="mailto://reese@reesep.com">
+            Contact
+          </a>
         </div>
-        <a className="text-cyan-400" href="mailto://reese@reesep.com">
-          Contact
-        </a>
       </div>
       <div className="p-2 min-w-[70%]">
         <Title>Reese Pollard</Title>
-        <div>Cloud⛅️| Network🌎 | Automation🤖 | Developer🔧 | Unicorn🦄</div>
+        <div>Cloud⛅️| Network🌎 | Automation🤖 | Developer🔧 </div>
         <br />
         <UnorderedList
           heading="Skills"
