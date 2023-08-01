@@ -1,18 +1,9 @@
 
 import axios from 'axios'
-const serverUrl = 'http://localhost:8080'
+const serverUrl = import.meta.env.VITE_API_URL
 const baseUrl = `${serverUrl}/api/users`
 
-let token = null
-
-function setToken(newToken: string) {
-  token = `Bearer ${newToken}`
-}
-
 async function postSignup(signupPost: UserSignupType) {
-  // const config = {
-  //   headers: { Authorization: "FAKECODE"}
-  // }
   const res = await axios.post(`${baseUrl}/signup`, signupPost)
   return res.data
 }
@@ -23,7 +14,6 @@ async function postLogin(loginPost: LoginPost) {
 }
 
 const exports = {
-  setToken,
   postSignup,
   postLogin
 }

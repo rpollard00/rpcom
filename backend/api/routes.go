@@ -2,10 +2,17 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 )
+
+var allowedOrigins = []string{
+	"http://localhost:5173",
+	"https://reesep.com",
+	"https://reesep-com-test.fly.dev",
+}
 
 func (app *application) setGlobalOptions(rtr *httprouter.Router) {
 	rtr.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -13,7 +20,15 @@ func (app *application) setGlobalOptions(rtr *httprouter.Router) {
 			header := w.Header()
 			header.Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST")
 			header.Set("Access-Control-Allow-Headers", "Content-Type, x-requested-with, authorization")
-			header.Set("Access-Control-Allow-Origin", "*")
+
+			// handle both prod and dev origins by matching the allowed origin
+			origin := r.Header.Get("origin")
+
+			for _, allowedOrigin := range allowedOrigins {
+				if strings.EqualFold(origin, allowedOrigin) {
+					header.Set("Access-Control-Allow-Origin", allowedOrigin)
+				}
+			}
 		}
 
 		w.WriteHeader(http.StatusNoContent)

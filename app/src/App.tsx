@@ -10,7 +10,6 @@ import { useCoolStore } from "./services/store"
 import { useEffect, useState } from "react"
 import blogService from './services/blogs'
 
-
 function App() {
   const user: UserData | undefined = useCoolStore((state) => state.loggedInUser)
   const setUser = useCoolStore((state) => state.setLoggedInUser)

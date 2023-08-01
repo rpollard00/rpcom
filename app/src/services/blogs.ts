@@ -1,7 +1,6 @@
 import axios from 'axios'
-const serverUrl = 'http://localhost:8080'
+const serverUrl = import.meta.env.VITE_API_URL
 const baseUrl = `${serverUrl}/api/blog`
-
 
 let token: string | null = null
 

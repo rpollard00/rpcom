@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/rpollard00/rpcom/internal/models"
@@ -29,8 +30,14 @@ type application struct {
 var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 func main() {
+	var default_dsn string
 	db_pass := os.Getenv("DB_SECRET")
-	default_dsn := fmt.Sprintf("postgres://web:%s@localhost:5432/rpcom_dev?sslmode=disable", db_pass)
+	environment := os.Getenv("APP_MODE")
+	if strings.ToLower(environment) == "prod" {
+		default_dsn = fmt.Sprintf("postgres://web:%s@rpcom.flycast:5432/rpcom_prod?sslmode=disable", db_pass)
+	} else {
+		default_dsn = fmt.Sprintf("postgres://web:%s@localhost:5432/rpcom_dev?sslmode=disable", db_pass)
+	}
 	addr := flag.String("addr", ":8080", "HTTP Network Address:[port]")
 	dsn := flag.String("dsn", default_dsn, "PSQL Connection String")
 

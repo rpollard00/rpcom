@@ -63,11 +63,11 @@ const LoginPage = () => {
         <div className="self-stretch flex-1">
           <div className="flex justify-end p-3">
             <label className="pl-1 pr-2 py-1.5">Email:</label>
-            <input className="flex-1 bg-zinc-900 px-2 text-end" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email" />
+            <input className="flex-1 bg-zinc-900 px-2 text-end" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@address.com" />
           </div>
           <div className="flex justify-end p-3">
             <label className="pl-1 pr-2 py-1.5">Password:</label>
-            <input className="flex-1 bg-zinc-900 px-2 text-end" type="password" name="Tags" onChange={e => setPassword(e.target.value)} value={password} />
+            <input className="flex-1 bg-zinc-900 px-2 text-end" type="password" name="Tags" onChange={e => setPassword(e.target.value)} value={password} placeholder="password123"/>
           </div>
           <div className="flex justify-end p-3">
             <button className="" type="submit">Login</button>
