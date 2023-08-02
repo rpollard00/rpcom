@@ -18,7 +18,7 @@ func (app *application) setGlobalOptions(rtr *httprouter.Router) {
 	rtr.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Access-Control-Request-Method") != "" {
 			header := w.Header()
-			header.Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST")
+			header.Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST, PUT")
 			header.Set("Access-Control-Allow-Headers", "Content-Type, x-requested-with, authorization")
 
 			// handle both prod and dev origins by matching the allowed origin
@@ -40,7 +40,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/api/ping", ping)
 	// this is for automatic option/CORS handling
 	app.setGlobalOptions(router)
-	// dynamic := alice.New(app.sessionManager.LoadAndSave, app.authenticate, app.addHeaders)
+
 	dynamic := alice.New(app.addHeaders)
 
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
@@ -54,7 +54,8 @@ func (app *application) routes() http.Handler {
 
 	protected := dynamic.Append(app.requireAuthentication)
 	router.Handler(http.MethodPost, "/api/blog/post", protected.ThenFunc(app.blogPost))
-	router.Handler(http.MethodPost, "/api/users/logout", protected.ThenFunc(app.blogPost))
+	router.Handler(http.MethodPut, "/api/blog/post/:id", protected.ThenFunc(app.blogUpdatePost))
+
 	standard := alice.New(app.recoverPanic, app.logRequest)
 	return standard.Then(router)
 }
