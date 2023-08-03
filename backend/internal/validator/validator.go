@@ -81,3 +81,7 @@ func Matches(str string, rx *regexp.Regexp) bool {
 func NotBlank(str string) bool {
 	return strings.TrimSpace(str) != ""
 }
+
+func NotZero(num int) bool {
+	return num != 0
+}

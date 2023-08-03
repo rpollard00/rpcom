@@ -8,6 +8,7 @@ type BlogEntry = {
 }
 
 type BlogPostType = {
+  ID?: number,
   Title: string,
   Author: string,
   Content: string,

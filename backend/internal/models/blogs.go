@@ -19,6 +19,7 @@ type Blog struct {
 // a blog interface
 type BlogModelInterface interface {
 	Insert(title string, author string, content string, tags string) (int, error)
+	Update(id int, title, author, content, tags string) (int, error)
 	Get(id int) (*Blog, error)
 	GetNextId(currentId int) (int, error)
 	GetPrevId(currentId int) (int, error)
@@ -113,6 +114,25 @@ func (m *BlogModel) Insert(title string, author string, content string, tags str
 	}
 
 	return int(id), nil
+}
+
+func (m *BlogModel) Update(id int, title, author, content, tags string) (int, error) {
+	stmt := `UPDATE blogs
+	SET title = $2,
+	    author = $3,
+	    content = $4,
+	    tags = $5
+	WHERE id = $1
+	RETURNING id`
+
+	var returnedId int
+
+	err := m.DB.QueryRow(stmt, id, title, author, content, tags).Scan(&returnedId)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(returnedId), nil
 }
 
 func (m *BlogModel) Latest() (*Blog, error) {

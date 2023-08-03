@@ -125,6 +125,7 @@ func (app *application) blogPost(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&form)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
+		return
 	}
 
 	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
@@ -134,7 +135,7 @@ func (app *application) blogPost(w http.ResponseWriter, r *http.Request) {
 	form.CheckField(validator.NotBlank(form.Author), "author", "This field cannot be blank")
 
 	if !form.Valid() {
-		app.clientError(w, http.StatusBadRequest)
+		app.jsonError(w, err, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -146,11 +147,64 @@ func (app *application) blogPost(w http.ResponseWriter, r *http.Request) {
 	data := blogPostResponse{
 		Id: id,
 	}
-	// app.sessionManager.Put(r.Context(), "flash", "Snippet successfully created!")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(data)
+	if err != nil {
+		app.jsonError(w, err, http.StatusUnprocessableEntity)
+		return
+	}
+}
+
+func (app *application) blogUpdatePost(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+
+	var form blogPostForm
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(params.ByName("id"))
+	if err != nil || id < 1 {
+		app.notFound(w)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+	form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be more than 100 characters long")
+	form.CheckField(validator.NotBlank(form.Content), "content", "This field cannot be blank")
+	form.CheckField(validator.NotBlank(form.Tags), "tags", "This field cannot be blank")
+	form.CheckField(validator.NotBlank(form.Author), "author", "This field cannot be blank")
+
+	if !form.Valid() {
+		messages, err := form.GetValidatorMessages()
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		app.jsonResponse(w, messages, http.StatusUnprocessableEntity)
+		return
+	}
+
+	returnedId, err := app.blogs.Update(id, form.Title, form.Author, form.Content, form.Tags)
+	if err != nil {
+		app.jsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	data := blogPostResponse{
+		Id: returnedId,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(data)
+
 	if err != nil {
 		app.jsonError(w, err, http.StatusUnprocessableEntity)
 		return
@@ -284,7 +338,7 @@ func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 10 minutes from now if that isn't obvious
-	expirationTime := time.Now().Add(10 * time.Minute)
+	expirationTime := time.Now().Add(12 * time.Hour)
 
 	claims := &Claims{
 		Email: form.Email,

@@ -5,7 +5,6 @@ const baseUrl = `${serverUrl}/api/blog`
 let token: string | null = null
 
 function setToken(newToken: string) {
-  console.log("TOKEN SET")
   token = `Bearer ${newToken}`
   return
 }
@@ -58,12 +57,27 @@ async function postBlog(blogPost: BlogPostType) {
   return res.data
 }
 
+async function putBlog(blogPost: BlogPostType) {
+  const config = {
+    headers: { Authorization: token }
+  }
+  const { ID, ...postBody } = blogPost
+
+  try {
+    const res = await axios.put(`${baseUrl}/post/${ID}`, postBody, config)
+    return res.data
+  } catch (error) {
+    console.error(error) 
+  }
+}
+
 const exports = {
   getBlogs,
   getNextBlogId,
   getPrevBlogId,
   getLatestBlogId,
   postBlog,
+  putBlog,
   setToken
 }
 
