@@ -1,14 +1,8 @@
 import Title from "./Title"
 import { UnorderedList } from "./List"
 import portraitImg from "../assets/portrait.png"
-//import Notification from './Notification'
-import { useEffect } from "react"
 
 export const Home = () => {
-  useEffect(() => {
-    console.log("Blah")
-  }, [])
-
   return (
     <div className="flex flex-col md:flex-row items-start">
       <div className="p-2 md:mb-0 md:mr-6">

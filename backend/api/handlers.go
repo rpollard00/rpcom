@@ -338,7 +338,7 @@ func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 10 minutes from now if that isn't obvious
-	expirationTime := time.Now().Add(10 * time.Minute)
+	expirationTime := time.Now().Add(12 * time.Hour)
 
 	claims := &Claims{
 		Email: form.Email,

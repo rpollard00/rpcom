@@ -14,7 +14,6 @@ const SignupPage = () => {
     try {
       r = await userService.postSignup(signupObj)
       addToast(`Successfully registered user: ${username}`)
-      console.log(r)
       return r
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -43,8 +42,6 @@ const SignupPage = () => {
         console.error("Unable to post signup...") 
       }
     }
-     
-    console.log(`${username} ${email}`) 
   }
 
   return (
