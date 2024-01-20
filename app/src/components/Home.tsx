@@ -25,10 +25,9 @@ export const Home = () => {
           heading="Skills"
           items={[
             "IaC: Terraform, Microsoft Bicep, Ansible",
-            "Languages: Python, Javascript, Powershell, Golang",
+            "Languages: Golang, Python, Javascript, Powershell",
             "Microsoft Azure",
             "Network Architecture & Engineering",
-            "Many other things",
           ]}
         />
 
@@ -36,24 +35,21 @@ export const Home = () => {
           <p></p>
           <br />
           <p>
-            My primary role has been as a Senior Network Engineer + Architect +
-            I've been the primary architect and engineer in many areas, such as:
+            I'm a Senior Network, Cloud, and Automation Engineer
+            I build technology solutions across many domains.
             Datacenter Networking (VXLAN BGP EVPN), SD-WAN Infrastructure,
-            multi-homed BGP, public DNS. Plus, I've automated a lot of how we
-            operate our network.
+            multi-homed BGP,and DNS. 
           </p>
           <br />
           <p>
-            There's more... I'm also a Cloud Engineer. I've architected and
-            contributed to the architecture and design of a number of solutions
+            I've architected and developed a number of solutions
             on various MS Azure Platforms. Such as: Function Apps, Azure
             Container Instances, Virtual Machine Scale Sets, Azure VirtualWAN.
             All built with IaC and deployed with CI/CD pipelines.
           </p>
           <br />
           <p>
-            I can also automate things with code that != IaC templates. I've
-            built quite a bit of automation with Python.
+            If you think I can help you or your business, please contact me at reese@reesep.com.
           </p>
         </div>
       </div>
